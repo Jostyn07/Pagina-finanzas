@@ -1,8 +1,9 @@
-import { BarChart3, Wallet, Target, Brain } from 'lucide-react'
+import { BarChart3, Wallet, CreditCard, Target, Brain } from 'lucide-react'
 
 const items = [
   { id: 'dashboard', label: 'Inicio', icon: BarChart3 },
   { id: 'transactions', label: 'Movimientos', icon: Wallet },
+  { id: 'debts', label: 'Deudas', icon: CreditCard },
   { id: 'goals', label: 'Metas', icon: Target },
   { id: 'advisor', label: 'Asesor IA', icon: Brain },
 ]

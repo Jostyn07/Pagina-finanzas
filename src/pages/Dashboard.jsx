@@ -12,6 +12,7 @@ import TransactionModal from '../components/TransactionModal'
 import BottomNav from '../components/BottomNav'
 import GoalsTab from '../components/GoalsTab'
 import AdvisorTab from '../components/AdvisorTab'
+import DebtsTab from '../components/DebtsTab'
 
 export default function Dashboard() {
   const { profile, signOut } = useAuth()
@@ -29,7 +30,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen pb-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Header */}
       <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur-lg border-b border-slate-700/50">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -46,11 +46,8 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-4 space-y-4">
-
-        {/* ===== DASHBOARD ===== */}
         {tab === 'dashboard' && (
           <>
-            {/* Health Score + Summary */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 flex flex-col items-center">
                 <HealthRing score={data.healthScore} />
@@ -77,11 +74,8 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-
             <BudgetBars profile={profile} transactions={data.transactions} />
             <BabySteps currentStep={profile.current_baby_step || 1} />
-
-            {/* Recent Transactions */}
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="text-sm font-semibold text-white">Últimos movimientos</h3>
@@ -92,7 +86,6 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* ===== TRANSACTIONS ===== */}
         {tab === 'transactions' && (
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Movimientos del mes</h3>
@@ -107,17 +100,18 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ===== GOALS ===== */}
+        {tab === 'debts' && (
+          <DebtsTab debts={data.debts} profile={profile} onRefresh={data.loadData} />
+        )}
+
         {tab === 'goals' && <GoalsTab goals={data.goals} profile={profile} />}
 
-        {/* ===== AI ADVISOR ===== */}
         {tab === 'advisor' && (
           <AdvisorTab profile={profile} monthlyIncome={data.monthlyIncome}
             expenses={data.expenses} totalDebt={data.totalDebt} healthScore={data.healthScore} />
         )}
       </main>
 
-      {/* FAB */}
       <button onClick={() => setShowAddTx(true)}
         className="fixed bottom-24 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[280px] w-14 h-14 bg-amber-500 hover:bg-amber-400 rounded-2xl shadow-lg shadow-amber-500/25 flex items-center justify-center transition-transform hover:scale-105 z-30">
         <Plus className="w-6 h-6 text-slate-900" />
