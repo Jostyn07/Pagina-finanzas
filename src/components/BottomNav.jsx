@@ -1,4 +1,4 @@
-import { BarChart3, Wallet, CreditCard, Target, Brain, TrendingUp } from 'lucide-react'
+import { BarChart3, Wallet, CreditCard, Target, Brain, TrendingUp, BookOpen } from 'lucide-react'
 
 const items = [
   { id: 'dashboard',    label: 'Inicio',      icon: BarChart3 },
@@ -6,6 +6,7 @@ const items = [
   { id: 'debts',        label: 'Deudas',      icon: CreditCard },
   { id: 'goals',        label: 'Metas',       icon: Target },
   { id: 'analytics',   label: 'Analytics',   icon: TrendingUp },
+  { id: 'education',    label: 'Educación',   icon: BookOpen },
   { id: 'advisor',      label: 'Asesor IA',   icon: Brain },
 ]
 

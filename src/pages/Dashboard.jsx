@@ -14,6 +14,7 @@ import GoalsTab from '../components/GoalsTab'
 import AdvisorTab from '../components/AdvisorTab'
 import DebtsTab from '../components/DebtsTab'
 import AnalyticsTab from '../components/AnalyticsTab'
+import EducationTab from '../components/EducationTab'
 
 function exportPDF(profile, data) {
   const { monthlyIncome, expenses, netWorth, savingsRate, healthScore, debts, goals, transactions } = data
@@ -43,9 +44,8 @@ function exportPDF(profile, data) {
   .card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; }
   .card-label { font-size: 11px; color: #64748b; margin-bottom: 4px; }
   .card-value { font-size: 18px; font-weight: 700; }
-  .green { color: #10b981; } .red { color: #ef4444; } .amber { color: #f59e0b; } .blue { color: #3b82f6; }
+  .green { color: #10b981; } .red { color: #ef4444; } .amber { color: #f59e0b; }
   .section { margin-bottom: 24px; }
-  .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
   .bar-wrap { margin: 6px 0; }
   .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
   .bar-bg { background: #e2e8f0; border-radius: 99px; height: 8px; }
@@ -60,7 +60,6 @@ function exportPDF(profile, data) {
   <div class="logo">Fin<span>Wise</span></div>
   <div class="date">Reporte financiero — ${monthName}<br/>${profile.full_name}</div>
 </div>
-
 <div class="score-row">
   <div class="score-circle">${healthScore}</div>
   <div>
@@ -68,60 +67,17 @@ function exportPDF(profile, data) {
     <div style="font-size:12px;color:#64748b;">${healthScore >= 70 ? '✅ Salud financiera buena' : healthScore >= 40 ? '⚠️ Salud financiera regular' : '🔴 Requiere atención'}</div>
   </div>
 </div>
-
 <div class="grid">
-  <div class="card">
-    <div class="card-label">Ingreso mensual</div>
-    <div class="card-value green">${formatMoney(monthlyIncome, profile.currency)}</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Gastos del mes</div>
-    <div class="card-value red">${formatMoney(expenses, profile.currency)}</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Flujo de caja</div>
-    <div class="card-value ${monthlyIncome - expenses >= 0 ? 'green' : 'red'}">${formatMoney(monthlyIncome - expenses, profile.currency)}</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Patrimonio neto</div>
-    <div class="card-value ${netWorth >= 0 ? 'green' : 'red'}">${formatMoney(netWorth, profile.currency)}</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Tasa de ahorro</div>
-    <div class="card-value ${savingsRate >= 20 ? 'green' : savingsRate >= 10 ? 'amber' : 'red'}">${savingsRate.toFixed(1)}%</div>
-  </div>
-  <div class="card">
-    <div class="card-label">Total deudas</div>
-    <div class="card-value red">${formatMoney(totalDebt, profile.currency)}</div>
-  </div>
+  <div class="card"><div class="card-label">Ingreso mensual</div><div class="card-value green">${formatMoney(monthlyIncome, profile.currency)}</div></div>
+  <div class="card"><div class="card-label">Gastos del mes</div><div class="card-value red">${formatMoney(expenses, profile.currency)}</div></div>
+  <div class="card"><div class="card-label">Flujo de caja</div><div class="card-value ${monthlyIncome - expenses >= 0 ? 'green' : 'red'}">${formatMoney(monthlyIncome - expenses, profile.currency)}</div></div>
+  <div class="card"><div class="card-label">Patrimonio neto</div><div class="card-value ${netWorth >= 0 ? 'green' : 'red'}">${formatMoney(netWorth, profile.currency)}</div></div>
+  <div class="card"><div class="card-label">Tasa de ahorro</div><div class="card-value ${savingsRate >= 20 ? 'green' : savingsRate >= 10 ? 'amber' : 'red'}">${savingsRate.toFixed(1)}%</div></div>
+  <div class="card"><div class="card-label">Total deudas</div><div class="card-value red">${formatMoney(totalDebt, profile.currency)}</div></div>
 </div>
-
-${topSorted.length > 0 ? `
-<div class="section">
-  <h2>Top categorías de gasto</h2>
-  ${topSorted.map(([name, val], i) => `
-    <div class="bar-wrap">
-      <div class="bar-label"><span>${name}</span><span><b>${formatMoney(val, profile.currency)}</b></span></div>
-      <div class="bar-bg"><div class="bar-fill" style="width:${(val / topSorted[0][1] * 100).toFixed(0)}%;background:${['#ef4444','#f97316','#f59e0b','#94a3b8','#94a3b8'][i]}"></div></div>
-    </div>
-  `).join('')}
-</div>` : ''}
-
-${goals.length > 0 ? `
-<div class="section">
-  <h2>Metas financieras</h2>
-  ${goals.filter(g => g.status === 'active').map(g => {
-    const pct = g.target_amount > 0 ? Math.min(100, (g.current_amount / g.target_amount * 100)).toFixed(0) : 0
-    return `<div class="bar-wrap">
-      <div class="bar-label"><span>${g.name}</span><span>${pct}% — ${formatMoney(g.current_amount, profile.currency)} de ${formatMoney(g.target_amount, profile.currency)}</span></div>
-      <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:#10b981"></div></div>
-    </div>`
-  }).join('')}
-</div>` : ''}
-
-<div class="footer">
-  Generado por FinWise · ${new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} · Para uso personal
-</div>
+${topSorted.length > 0 ? `<div class="section"><h2>Top categorías de gasto</h2>${topSorted.map(([name, val], i) => `<div class="bar-wrap"><div class="bar-label"><span>${name}</span><span><b>${formatMoney(val, profile.currency)}</b></span></div><div class="bar-bg"><div class="bar-fill" style="width:${(val/topSorted[0][1]*100).toFixed(0)}%;background:${['#ef4444','#f97316','#f59e0b','#94a3b8','#94a3b8'][i]}"></div></div></div>`).join('')}</div>` : ''}
+${goals.length > 0 ? `<div class="section"><h2>Metas financieras</h2>${goals.filter(g=>g.status==='active').map(g=>{const pct=g.target_amount>0?Math.min(100,(g.current_amount/g.target_amount*100)).toFixed(0):0;return`<div class="bar-wrap"><div class="bar-label"><span>${g.name}</span><span>${pct}% — ${formatMoney(g.current_amount,profile.currency)} de ${formatMoney(g.target_amount,profile.currency)}</span></div><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:#10b981"></div></div></div>`}).join('')}</div>` : ''}
+<div class="footer">Generado por FinWise · ${new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' })} · Para uso personal</div>
 </body></html>`
 
   const blob = new Blob([html], { type: 'text/html' })
@@ -158,8 +114,7 @@ export default function Dashboard() {
           <div className="flex items-center gap-2">
             <span className="text-sm text-slate-400">Hola, {profile.full_name?.split(' ')[0] || 'Usuario'}</span>
             {tab === 'analytics' && (
-              <button onClick={() => exportPDF(profile, data)}
-                className="p-2 hover:bg-slate-800 rounded-lg" title="Exportar reporte">
+              <button onClick={() => exportPDF(profile, data)} className="p-2 hover:bg-slate-800 rounded-lg" title="Exportar reporte">
                 <Download className="w-4 h-4 text-amber-400" />
               </button>
             )}
@@ -181,21 +136,15 @@ export default function Dashboard() {
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4 flex flex-col justify-center space-y-3">
                 <div>
                   <p className="text-xs text-slate-500">Patrimonio neto</p>
-                  <p className={`text-xl font-bold ${data.netWorth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {formatMoney(data.netWorth, profile.currency)}
-                  </p>
+                  <p className={`text-xl font-bold ${data.netWorth >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{formatMoney(data.netWorth, profile.currency)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Flujo del mes</p>
-                  <p className={`text-lg font-bold ${data.netCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                    {formatMoney(data.netCashFlow, profile.currency)}
-                  </p>
+                  <p className={`text-lg font-bold ${data.netCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{formatMoney(data.netCashFlow, profile.currency)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">Tasa de ahorro</p>
-                  <p className={`text-sm font-bold ${data.savingsRate >= 20 ? 'text-emerald-400' : data.savingsRate >= 10 ? 'text-amber-400' : 'text-red-400'}`}>
-                    {data.savingsRate.toFixed(1)}%
-                  </p>
+                  <p className={`text-sm font-bold ${data.savingsRate >= 20 ? 'text-emerald-400' : data.savingsRate >= 10 ? 'text-amber-400' : 'text-red-400'}`}>{data.savingsRate.toFixed(1)}%</p>
                 </div>
               </div>
             </div>
@@ -210,42 +159,22 @@ export default function Dashboard() {
             </div>
           </>
         )}
-
         {tab === 'transactions' && (
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Movimientos del mes</h3>
             <TransactionList transactions={data.transactions} profile={profile} onRefresh={data.loadData} />
             {data.transactions.length === 0 && (
               <div className="text-center mt-4">
-                <button onClick={() => setShowAddTx(true)} className="px-4 py-2 bg-amber-500 text-slate-900 rounded-xl text-sm font-semibold">
-                  Registrar el primero
-                </button>
+                <button onClick={() => setShowAddTx(true)} className="px-4 py-2 bg-amber-500 text-slate-900 rounded-xl text-sm font-semibold">Registrar el primero</button>
               </div>
             )}
           </div>
         )}
-
-        {tab === 'debts' && (
-          <DebtsTab debts={data.debts} profile={profile} onRefresh={data.loadData} />
-        )}
-
-        {tab === 'goals' && (
-          <GoalsTab goals={data.goals} profile={profile} onRefresh={data.loadData}
-            monthlyIncome={data.monthlyIncome} expenses={data.expenses} />
-        )}
-
-        {tab === 'analytics' && (
-          <AnalyticsTab profile={profile} transactions={data.transactions}
-            healthScore={data.healthScore} monthlyIncome={data.monthlyIncome}
-            expenses={data.expenses} savingsRate={data.savingsRate} />
-        )}
-
-        {tab === 'advisor' && (
-          <AdvisorTab profile={profile} monthlyIncome={data.monthlyIncome}
-            expenses={data.expenses} totalDebt={data.totalDebt}
-            healthScore={data.healthScore} netWorth={data.netWorth}
-            savingsRate={data.savingsRate} debts={data.debts} goals={data.goals} />
-        )}
+        {tab === 'debts' && <DebtsTab debts={data.debts} profile={profile} onRefresh={data.loadData} />}
+        {tab === 'goals' && <GoalsTab goals={data.goals} profile={profile} onRefresh={data.loadData} monthlyIncome={data.monthlyIncome} expenses={data.expenses} />}
+        {tab === 'analytics' && <AnalyticsTab profile={profile} transactions={data.transactions} healthScore={data.healthScore} monthlyIncome={data.monthlyIncome} expenses={data.expenses} savingsRate={data.savingsRate} />}
+        {tab === 'education' && <EducationTab profile={profile} />}
+        {tab === 'advisor' && <AdvisorTab profile={profile} monthlyIncome={data.monthlyIncome} expenses={data.expenses} totalDebt={data.totalDebt} healthScore={data.healthScore} netWorth={data.netWorth} savingsRate={data.savingsRate} debts={data.debts} goals={data.goals} />}
       </main>
 
       <button onClick={() => setShowAddTx(true)}
@@ -256,8 +185,7 @@ export default function Dashboard() {
       <BottomNav active={tab} onChange={setTab} />
 
       {showAddTx && (
-        <TransactionModal profile={profile} categories={data.categories}
-          onClose={() => setShowAddTx(false)} onSaved={data.loadData} />
+        <TransactionModal profile={profile} categories={data.categories} onClose={() => setShowAddTx(false)} onSaved={data.loadData} />
       )}
     </div>
   )
