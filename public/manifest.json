@@ -1,0 +1,12 @@
+{
+  "name": "FinWise",
+  "short_name": "FinWise",
+  "description": "Tu asistente financiero inteligente",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#f5a623",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
