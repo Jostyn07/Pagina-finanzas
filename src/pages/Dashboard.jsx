@@ -104,11 +104,27 @@ export default function Dashboard() {
           <DebtsTab debts={data.debts} profile={profile} onRefresh={data.loadData} />
         )}
 
-        {tab === 'goals' && <GoalsTab goals={data.goals} profile={profile} />}
+        {tab === 'goals' && (
+          <GoalsTab
+            goals={data.goals}
+            profile={profile}
+            onRefresh={data.loadData}
+            monthlyIncome={data.monthlyIncome}
+          />
+        )}
 
         {tab === 'advisor' && (
-          <AdvisorTab profile={profile} monthlyIncome={data.monthlyIncome}
-            expenses={data.expenses} totalDebt={data.totalDebt} healthScore={data.healthScore} />
+          <AdvisorTab
+            profile={profile}
+            monthlyIncome={data.monthlyIncome}
+            expenses={data.expenses}
+            totalDebt={data.totalDebt}
+            healthScore={data.healthScore}
+            netWorth={data.netWorth}
+            savingsRate={data.savingsRate}
+            debts={data.debts}
+            goals={data.goals}
+          />
         )}
       </main>
 
